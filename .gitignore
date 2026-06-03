@@ -15,5 +15,8 @@ data/datasets/
 *.pth
 *.ckpt
 *.onnx
+*.bin
+*.safetensors
+*.msgpack
 
 .DS_Store

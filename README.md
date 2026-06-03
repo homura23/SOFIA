@@ -1,64 +1,111 @@
-# sofia
+# SOFIA
 
-Migrated MONICA audio detector code with project-local paths, optional Demucs
-vocal separation, and configurable encoder dependencies.
+SOFIA is a multi-encoder synthetic song detector. This migrated version uses
+project-relative paths, configurable encoder locations, automatic audio
+resampling, and optional Demucs vocal separation.
 
 ## Setup
 
 ```bash
-cd /path/to/parent/of/sofia
-python -m pip install -r sofia/requirements.txt
+cd /path/to/sofia
+python -m pip install -r requirements.txt
 ```
 
-Run scripts from the parent directory so `sofia` is importable:
+If the pinned `torch`/`torchaudio` wheels do not match your CUDA runtime,
+install the matching PyTorch wheels first, then install the remaining packages.
+`ffmpeg` is only required for `augment_audio.py`.
+
+## Weights
+
+Large model weights are not committed. Put downloaded weights in these paths:
+
+```text
+weights/fxpp/fxenc_plusplus_default.pt
+third_party/muq_weights/model.safetensors
+third_party/muq_weights/pytorch_model.bin        # optional alternative
+third_party/mert/pytorch_model.bin
+third_party/mert/MERT-v1-95M_fairseq.pt
+third_party/wav2vec/pytorch_model.bin
+weights/rawnet/epoch_49.pth
+```
+
+Lightweight encoder source/config files are included under `third_party/`.
+The YAML configs already point to these project-relative locations.
+
+## CSV Format
+
+Training and dataset testing read CSV files with `label` and `full_path` columns.
+`vocal_path` and `source` are optional.
+
+```csv
+full_path,vocal_path,label,source
+audio/song_001.wav,vocals/song_001.wav,0,human
+audio/song_002.wav,,1,ai
+```
+
+If `vocal_path` is missing and `data.demucs_enabled` is true, vocals are
+separated from `full_path` automatically when a branch needs vocals.
+
+## Training
+
+Run from the parent directory of `sofia`:
 
 ```bash
-python -m sofia.train --config sofia/config/default.yaml --run_name experiment
+cd /path/to
+python -m sofia.train \
+  --config sofia/config/default.yaml \
+  --run_name experiment \
+  --device cuda:0
 ```
 
-The standalone scripts also add the package parent to `sys.path`, so direct
-execution still works from the repository checkout.
-
-## Paths
-
-Relative paths in YAML configs are resolved against the `sofia` project root.
-Environment variables and `~` are expanded before resolution. This applies to:
-
-- `data.train_csv`
-- `data.val_csv`
-- `training.save_dir`
-- encoder `weights`
-- encoder `config`
-- encoder `repo_path`
-
-For another server, either keep the same project-local layout or override these
-paths in a copied config file.
-
-## External Encoders
-
-Fx-Encoder++ and MuQ can be installed as importable Python packages, or provided
-as source checkouts:
-
-```yaml
-audio_branches:
-  fxpp:
-    repo_path: /path/to/Fx-Encoder_PlusPlus-main
-  muq:
-    repo_path: /path/to/muq
-```
-
-Equivalent environment variables are also supported:
+Resume from a checkpoint:
 
 ```bash
-export FXPP_REPO=/path/to/Fx-Encoder_PlusPlus-main
-export MUQ_REPO=/path/to/muq
+python -m sofia.train \
+  --config sofia/config/default.yaml \
+  --run_name experiment \
+  --resume sofia/outputs/experiment/experiment_epoch10.pt
 ```
 
-RawNet is loaded from `audio_branches.rawnet.repo_path`, with its config and
-checkpoint from the corresponding `config` and `weights` entries.
+## Dataset Testing From CSV
 
-## Vocal Separation
+Use `test.py` for loss and accuracy:
 
-If `data.demucs_enabled` is true and a CSV row has no usable `vocal_path`, the
-dataset attempts to separate vocals from `full_path` with the configured Demucs
-model. If separation fails, the sample falls back to silence for vocal branches.
+```bash
+cd /path/to
+python -m sofia.test \
+  --config sofia/config/default.yaml \
+  --checkpoint sofia/outputs/experiment/experiment_epoch10.pt \
+  --csv sofia/data/test.csv \
+  --device cuda:0
+```
+
+Use `test_f1_acc.py` for accuracy and F1:
+
+```bash
+python -m sofia.test_f1_acc \
+  --config sofia/config/default.yaml \
+  --checkpoint sofia/outputs/experiment/experiment_epoch10.pt \
+  --csv sofia/data/test.csv \
+  --device cuda:0
+```
+
+## Single-Audio Testing
+
+`predict_audio.py` tests one audio file without a CSV. It prints `true` for
+label `1` and `false` for label `0`.
+
+```bash
+cd /path/to
+python -m sofia.predict_audio \
+  --config sofia/config/rawnet_only.yaml \
+  --checkpoint sofia/outputs/rawnet_only/rawnet_only_epoch1.pt \
+  --audio /path/to/audio.wav \
+  --device cuda:0
+```
+
+Useful options:
+
+- `--vocal_audio /path/to/vocals.wav`: use a precomputed vocal stem.
+- `--json`: print prediction details.
+- `--quiet`: print only `true` or `false`.

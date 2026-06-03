@@ -42,7 +42,8 @@ loss:
 audio_branches:
   muq:
     enabled: true
-    weights: weights/muq/muq_weights
+    weights: third_party/muq_weights
+    repo_path: third_party/muq
     target_sr: 24000
     channels: 1
     segment_seconds: 0
@@ -51,7 +52,7 @@ audio_branches:
     device: auto
   mert:
     enabled: true
-    weights: weights/mert
+    weights: third_party/mert
     target_sr: 24000
     channels: 1
     segment_seconds: 0
@@ -61,7 +62,7 @@ audio_branches:
     device: auto
   wave:
     enabled: true
-    weights: weights/wav2vec
+    weights: third_party/wav2vec
     target_sr: 16000
     channels: 1
     segment_seconds: 0
@@ -71,13 +72,13 @@ audio_branches:
     device: auto
   rawnet:
     enabled: true
-    config: weights/rawnet/model_config_RawNet.yaml
+    config: third_party/rawnet/model_config_RawNet.yaml
     weights: weights/rawnet/epoch_49.pth
     target_sr: 16000
     channels: 1
     segment_seconds: 0
     embed_dim: 1024
     project_dim: 256
-    repo_path: weights/rawnet
+    repo_path: third_party/rawnet
     device: auto
     use_vocals: true

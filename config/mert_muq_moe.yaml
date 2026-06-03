@@ -42,7 +42,8 @@ loss:
 audio_branches:
   muq:
     enabled: true
-    weights: weights/muq/muq_weights
+    weights: third_party/muq_weights
+    repo_path: third_party/muq
     target_sr: 24000
     channels: 1
     segment_seconds: 0
@@ -51,7 +52,7 @@ audio_branches:
     device: auto
   mert:
     enabled: true
-    weights: weights/mert
+    weights: third_party/mert
     target_sr: 24000
     channels: 1
     segment_seconds: 0

@@ -44,13 +44,13 @@ loss:
 audio_branches:
   rawnet:
     enabled: true
-    config: weights/rawnet/model_config_RawNet.yaml
+    config: third_party/rawnet/model_config_RawNet.yaml
     weights: weights/rawnet/epoch_49.pth
     target_sr: 16000
     channels: 1
     segment_seconds: 0
     embed_dim: 1024
     project_dim: 256
-    repo_path: weights/rawnet
+    repo_path: third_party/rawnet
     device: auto
     use_vocals: true

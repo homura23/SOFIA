@@ -18,10 +18,12 @@ def _candidate_repos(repo_path: Optional[str]) -> list[Path]:
         os.getenv("FXPP_REPO"),
         os.getenv("FXENCODER_PLUSPLUS_REPO"),
     ]
+    project_root = Path(__file__).resolve().parents[1]
     code_root = Path(__file__).resolve().parents[2]
     repos = [Path(p).expanduser() for p in repo_values if p]
     repos.extend(
         [
+            project_root / "third_party" / "fxencoder_plusplus",
             code_root / "fxplusplus" / "fx_code" / "Fx-Encoder_PlusPlus-main",
             code_root / "Fx-Encoder_PlusPlus-main",
         ]
@@ -30,20 +32,23 @@ def _candidate_repos(repo_path: Optional[str]) -> list[Path]:
 
 
 def _load_fxencoder(repo_path: Optional[str]):
+    import_error: ModuleNotFoundError | None = None
+    for repo in _candidate_repos(repo_path):
+        if repo.exists() and str(repo) not in sys.path:
+            sys.path.insert(0, str(repo))
+        try:
+            from fxencoder_plusplus.model import FxEncoderPlusPlus, get_model_path
+
+            return FxEncoderPlusPlus, get_model_path
+        except ModuleNotFoundError as exc:
+            import_error = exc
+            continue
     try:
         from fxencoder_plusplus.model import FxEncoderPlusPlus, get_model_path
 
         return FxEncoderPlusPlus, get_model_path
-    except ModuleNotFoundError as import_error:
-        for repo in _candidate_repos(repo_path):
-            if repo.exists() and str(repo) not in sys.path:
-                sys.path.insert(0, str(repo))
-            try:
-                from fxencoder_plusplus.model import FxEncoderPlusPlus, get_model_path
-
-                return FxEncoderPlusPlus, get_model_path
-            except ModuleNotFoundError:
-                continue
+    except ModuleNotFoundError as exc:
+        import_error = import_error or exc
         raise ModuleNotFoundError(
             "fxencoder_plusplus is not importable. Install it, set FXPP_REPO, "
             "or set audio_branches.fxpp.repo_path to the Fx-Encoder++ source root."

@@ -44,7 +44,7 @@ loss:
 audio_branches:
   wave:
     enabled: true
-    weights: weights/wav2vec
+    weights: third_party/wav2vec
     target_sr: 16000
     channels: 1
     segment_seconds: 0

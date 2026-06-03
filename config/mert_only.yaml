@@ -44,7 +44,7 @@ loss:
 audio_branches:
   mert:
     enabled: true
-    weights: weights/mert
+    weights: third_party/mert
     target_sr: 24000
     channels: 1
     segment_seconds: 0

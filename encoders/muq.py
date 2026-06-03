@@ -13,27 +13,31 @@ from sofia.utils.audio import ensure_channels
 
 
 def _candidate_repos(repo_path: Optional[str]) -> list[Path]:
+    project_root = Path(__file__).resolve().parents[1]
     code_root = Path(__file__).resolve().parents[2]
     repos = [Path(p).expanduser() for p in (repo_path, os.getenv("MUQ_REPO")) if p]
-    repos.extend([code_root / "muq", code_root / "MuQ"])
+    repos.extend([project_root / "third_party" / "muq", code_root / "muq", code_root / "MuQ"])
     return repos
 
 
 def _load_muq(repo_path: Optional[str]):
+    import_error: ModuleNotFoundError | None = None
+    for repo in _candidate_repos(repo_path):
+        if repo.exists() and str(repo) not in sys.path:
+            sys.path.insert(0, str(repo))
+        try:
+            from muq import MuQ
+
+            return MuQ
+        except ModuleNotFoundError as exc:
+            import_error = exc
+            continue
     try:
         from muq import MuQ
 
         return MuQ
-    except ModuleNotFoundError as import_error:
-        for repo in _candidate_repos(repo_path):
-            if repo.exists() and str(repo) not in sys.path:
-                sys.path.insert(0, str(repo))
-            try:
-                from muq import MuQ
-
-                return MuQ
-            except ModuleNotFoundError:
-                continue
+    except ModuleNotFoundError as exc:
+        import_error = import_error or exc
         raise ModuleNotFoundError(
             "muq is not importable. Install it, set MUQ_REPO, "
             "or set audio_branches.muq.repo_path to the MuQ source root."
