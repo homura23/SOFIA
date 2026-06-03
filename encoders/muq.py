@@ -53,7 +53,7 @@ class MuQEncoder(BaseEncoder):
     ) -> None:
         super().__init__(name="muq", target_sr=24000, channels=1, embed_dim=1024, device=device)
         MuQ = _load_muq(repo_path)
-        weight_path = weights or os.getenv("MUQ_WEIGHTS", "weights/muq/muq_weights")
+        weight_path = weights or os.getenv("MUQ_WEIGHTS", "third_party/muq_weights")
         self.model = MuQ.from_pretrained(weight_path).to(device).eval()
 
     @torch.no_grad()

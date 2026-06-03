@@ -18,7 +18,7 @@ class MertEncoder(BaseEncoder):
         device: str | torch.device = "cpu",
         layer_pooling: str = "layer_mean",
     ) -> None:
-        model_path = weights or os.getenv("MERT_WEIGHTS", "weights/mert")
+        model_path = weights or os.getenv("MERT_WEIGHTS", "third_party/mert")
         processor = Wav2Vec2FeatureExtractor.from_pretrained(
             model_path,
             trust_remote_code=True,

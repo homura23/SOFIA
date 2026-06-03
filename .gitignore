@@ -8,10 +8,6 @@ env/
 
 outputs/
 logs/
-weights/*
-!weights/rawnet/
-weights/rawnet/*
-!weights/rawnet/epoch_49.pth
 data/datasets/
 
 *.pt
@@ -21,6 +17,6 @@ data/datasets/
 *.bin
 *.safetensors
 *.msgpack
-!weights/rawnet/epoch_49.pth
+!third_party/rawnet/epoch_49.pth
 
 .DS_Store

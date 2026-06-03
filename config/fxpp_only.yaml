@@ -44,7 +44,7 @@ loss:
 audio_branches:
   fxpp:
     enabled: true
-    weights: weights/fxpp/fxenc_plusplus_default.pt
+    weights: third_party/fxencoder_plusplus/fxenc_plusplus_default.pt
     repo_path: third_party/fxencoder_plusplus
     target_sr: 44100
     channels: 2

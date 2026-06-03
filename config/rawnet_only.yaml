@@ -45,7 +45,7 @@ audio_branches:
   rawnet:
     enabled: true
     config: third_party/rawnet/model_config_RawNet.yaml
-    weights: weights/rawnet/epoch_49.pth
+    weights: third_party/rawnet/epoch_49.pth
     target_sr: 16000
     channels: 1
     segment_seconds: 0

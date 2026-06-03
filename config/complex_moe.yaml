@@ -44,7 +44,7 @@ loss:
 audio_branches:
   fxpp:
     enabled: true
-    weights: weights/fxpp/fxenc_plusplus_default.pt
+    weights: third_party/fxencoder_plusplus/fxenc_plusplus_default.pt
     repo_path: third_party/fxencoder_plusplus
     target_sr: 44100
     channels: 2
@@ -85,7 +85,7 @@ audio_branches:
   rawnet:
     enabled: true
     config: third_party/rawnet/model_config_RawNet.yaml
-    weights: weights/rawnet/epoch_49.pth
+    weights: third_party/rawnet/epoch_49.pth
     target_sr: 16000
     channels: 1
     segment_seconds: 0

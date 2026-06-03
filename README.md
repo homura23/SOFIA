@@ -20,16 +20,16 @@ install the matching PyTorch wheels first, then install the remaining packages.
 Put downloaded weights directly under each encoder's project directory:
 
 ```text
-weights/fxpp/fxenc_plusplus_default.pt
+third_party/fxencoder_plusplus/fxenc_plusplus_default.pt
 third_party/muq_weights/model.safetensors
 third_party/muq_weights/pytorch_model.bin        # optional alternative
 third_party/mert/pytorch_model.bin
 third_party/mert/MERT-v1-95M_fairseq.pt
 third_party/wav2vec/pytorch_model.bin
-weights/rawnet/epoch_49.pth
+third_party/rawnet/epoch_49.pth
 ```
 
-RawNet `weights/rawnet/epoch_49.pth` is included in this repository.
+RawNet `third_party/rawnet/epoch_49.pth` is included in this repository.
 
 Download links:
 

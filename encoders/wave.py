@@ -18,7 +18,7 @@ class Wave2Vec2Encoder(BaseEncoder):
         device: str | torch.device = "cpu",
         layer_pooling: str = "layer_mean",
     ) -> None:
-        model_path = weights or os.getenv("WAV2VEC_WEIGHTS", "weights/wav2vec")
+        model_path = weights or os.getenv("WAV2VEC_WEIGHTS", "third_party/wav2vec")
         processor = Wav2Vec2FeatureExtractor.from_pretrained(
             model_path,
             trust_remote_code=True,
