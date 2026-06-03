@@ -17,7 +17,7 @@ install the matching PyTorch wheels first, then install the remaining packages.
 
 ## Weights
 
-Large model weights are not committed. Put downloaded weights in these paths:
+Put downloaded weights directly under each encoder's project directory:
 
 ```text
 weights/fxpp/fxenc_plusplus_default.pt
@@ -28,6 +28,15 @@ third_party/mert/MERT-v1-95M_fairseq.pt
 third_party/wav2vec/pytorch_model.bin
 weights/rawnet/epoch_49.pth
 ```
+
+RawNet `weights/rawnet/epoch_49.pth` is included in this repository.
+
+Download links:
+
+- fx: https://huggingface.co/yytung/fxencoder-plusplus/tree/main
+- muq: https://huggingface.co/OpenMuQ/MuQ-MuLan-large
+- mert: https://huggingface.co/m-a-p/MERT-v1-95M
+- wave2: https://huggingface.co/facebook/wav2vec2-base
 
 Lightweight encoder source/config files are included under `third_party/`.
 The YAML configs already point to these project-relative locations.
