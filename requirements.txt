@@ -1,0 +1,10 @@
+torch
+torchaudio
+transformers
+PyYAML
+scikit-learn
+pandas
+numpy
+librosa
+soundfile
+demucs
