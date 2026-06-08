@@ -1,0 +1,54 @@
+seed: 42
+device: auto
+
+data:
+  train_csv: data/train.csv
+  val_csv: data/valid.csv
+  base_sample_rate: 44100
+  segment_seconds: 0
+  normalize: true
+  mono: false
+  random_crop: true
+  batch_size: 32
+  num_workers: 8
+
+training:
+  epochs: 10
+  lr: 0.001
+  weight_decay: 0.0001
+  betas: [0.9, 0.98]
+  max_grad_norm: 5.0
+  amp: false
+  freeze_encoders: true
+  log_interval: 20
+  save_dir: checkpoint
+  save_every: 1
+  num_classes: 2
+  warmup_softmax_epochs: 0
+  warmup_lr: 0.001
+  warmup_amp: false
+
+fusion:
+  projector_dim: 256
+  fusion_hidden: [512]
+  fusion_out: 256
+  dropout: 0.1
+  l2_norm: true
+  mode: concat
+  moe_routing: dense
+  top_k: 1
+
+loss:
+  type: softmax
+
+audio_branches:
+  wave:
+    enabled: true
+    weights: third_party/wav2vec
+    target_sr: 16000
+    channels: 1
+    segment_seconds: 0
+    embed_dim: 768
+    project_dim: 256
+    layer_pooling: layer_mean
+    device: auto
