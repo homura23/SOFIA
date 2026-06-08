@@ -36,28 +36,6 @@ Download references:
 - mert: https://huggingface.co/m-a-p/MERT-v1-95M
 - wave2: https://huggingface.co/facebook/wav2vec2-base
 
-## Configs And Checkpoints
-
-Each config uses `training.save_dir: checkpoint`. The packaged checkpoints use
-matching SOFIA names:
-
-```text
-config/sofia_a1_fx.yaml                  checkpoint/sofia_A1_fx/sofia_A1_fx.pt
-config/sofia_g1_mert.yaml                checkpoint/sofia_G1_mert/sofia_G1_mert.pt
-config/sofia_g1_muq.yaml                 checkpoint/sofia_G1_muq/sofia_G1_muq.pt
-config/sofia_g2_mert_w_muq.yaml          checkpoint/sofia_G2_muq_w_mert/sofia_G2_muq_w_mert.pt
-config/sofia_v1_rawnet.yaml              checkpoint/sofia_V1_rawnet/sofia_V1_rawnet.pt
-config/sofia_v1_wave.yaml                checkpoint/sofia_V1_wave/sofia_V1_wave.pt
-config/sofia_vag_concat.yaml             checkpoint/sofia_vag_concat/sofia_vag_concat.pt
-config/sofia_vag_moe.yaml                checkpoint/sofia_vag_moe/sofia_vag_moe.pt
-config/sofia_vag_sample_gating.yaml      checkpoint/sofia_vag_sample_gating/sofia_vag_sample_gating.pt
-config/sofia_vag_wo_fx.yaml              checkpoint/sofia_vag_moe_wo_fx/sofia_vag_moe_wo_fx.pt
-config/sofia_vag_wo_mert.yaml            checkpoint/sofia_vag_moe_wo_mert/sofia_vag_moe_wo_mert.pt
-config/sofia_vag_wo_muq.yaml             checkpoint/sofia_vag_moe_wo_muq/sofia_vag_moe_wo_muq.pt
-config/sofia_vag_wo_rawnet.yaml          checkpoint/sofia_vag_moe_wo_rawnet/sofia_vag_moe_wo_rawnet.pt
-config/sofia_vag_wo_wave.yaml            checkpoint/sofia_vag_moe_wo_wave/sofia_vag_moe_wo_wave.pt
-```
-
 ## CSV Format
 
 Dataset CSV files should include:
@@ -69,3 +47,58 @@ audio/song_002.wav,,1,ai
 ```
 
 `full_path` and `label` are required. `vocal_path` and `source` are optional.
+
+## Training
+
+The commands below use SOFIA's standard entry modules: `sofia.train`,
+`sofia.test`, `sofia.test_f1_acc`, and `sofia.predict_audio`.
+
+Run training from the parent directory of `sofia`:
+
+```bash
+cd /path/to
+python -m sofia.train \
+  --config sofia/config/sofia_vag_concat.yaml \
+  --run_name sofia_vag_concat \
+  --device cuda:0
+```
+
+Checkpoints are saved under `checkpoint/` because each config uses
+`training.save_dir: checkpoint`.
+
+## Dataset Testing
+
+Use a CSV file with the format above:
+
+```bash
+cd /path/to
+python -m sofia.test \
+  --config sofia/config/sofia_vag_concat.yaml \
+  --checkpoint sofia/checkpoint/sofia_vag_concat/sofia_vag_concat.pt \
+  --csv sofia/data/test.csv \
+  --device cuda:0
+```
+
+For accuracy and F1:
+
+```bash
+python -m sofia.test_f1_acc \
+  --config sofia/config/sofia_vag_concat.yaml \
+  --checkpoint sofia/checkpoint/sofia_vag_concat/sofia_vag_concat.pt \
+  --csv sofia/data/test.csv \
+  --device cuda:0
+```
+
+## Single-Audio Testing
+
+```bash
+cd /path/to
+python -m sofia.predict_audio \
+  --config sofia/config/sofia_v1_rawnet.yaml \
+  --checkpoint sofia/checkpoint/sofia_V1_rawnet/sofia_V1_rawnet.pt \
+  --audio /path/to/audio.wav \
+  --device cuda:0
+```
+
+Use `--vocal_audio /path/to/vocals.wav` when a precomputed vocal stem is
+available.
